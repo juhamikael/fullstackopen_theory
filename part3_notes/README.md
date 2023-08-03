@@ -1,1 +1,1 @@
-# fullstackopen_theory
+# Notes App backend
