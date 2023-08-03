@@ -1,5 +1,5 @@
 # Notes App frontend & backend
-Consists of fullstackopen parts 2-4 theory part:
+Consists of fullstackopen theory parts 2-4 :
 - https://fullstackopen.com/en/part2
 - https://fullstackopen.com/en/part3
 - https://fullstackopen.com/en/part4
