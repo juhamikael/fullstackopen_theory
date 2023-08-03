@@ -1,0 +1,57 @@
+.custom_button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 1rem;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.list_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.app_container {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+}
+
+.flex_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.note_list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.input_form {
+  display: flex;
+  justify-content: center;
+}
+
+.note_input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  flex: 1;
+}
