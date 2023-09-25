@@ -1,61 +1,21 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import Note from "./components/Note";
-import axios from "axios";
+import { useState, useEffect, useRef } from "react";
+import { ThemeProvider } from "./components/theme-provider";
+
 import noteService from "./services/notes";
+import axios from "axios";
 
+import Navbar from "./components/Navbar";
+import LoginForm from "./components/LoginForm";
+import ShowNotes from "./components/ShowNotes";
+import NoteForm from "./components/NoteForm";
 
-const Form = ({ addNote, newNote, handleNoteChange }) => {
-  return (
-    <form onSubmit={addNote} className="input_form">
-      <input
-        value={newNote}
-        onChange={handleNoteChange}
-        className="note_input"
-      />
-      <button
-        type="submit"
-        className="custom_button"
-        style={{
-          backgroundColor: "#4caf50",
-          width: "100px",
-        }}
-      >
-        Save
-      </button>
-    </form>
-  );
-};
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("a new note...");
-  const [showAll, setShowAll] = useState(true);
-
-  const hook = () => {
-    axios.get("http://localhost:3001/notes").then((response) => {
-      setNotes(response.data);
-    });
-  };
-  useEffect(hook, []);
-
-  const addNote = (event) => {
-    event.preventDefault();
-    const noteObject = {
-      content: newNote,
-      important: Math.random() > 0.5,
-    };
-
-    noteService.create(noteObject).then((returnedNote) => {
-      setNotes(notes.concat(returnedNote));
-      setNewNote("");
-    });
-  };
-
-  const handleNoteChange = (event) => {
-    console.log(event.target.value);
-    setNewNote(event.target.value);
-  };
+  const [user, setUser] = useState(null);
+  const noteFormRef = useRef();
+  const authFormRef = useRef();
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -63,53 +23,44 @@ const App = () => {
     });
   }, []);
 
-  const toggleImportanceOf = (id) => {
-    const note = notes.find((n) => n.id === id);
-    const changedNote = { ...note, important: !note.important };
-
-    noteService.update(id, changedNote).then((returnedNote) => {
-      setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)));
+  const hook = () => {
+    axios.get("http://localhost:3001/api/notes").then((response) => {
+      setNotes(response.data);
     });
   };
 
-  const notesToShow = showAll
-    ? notes
-    : notes.filter((note) => note.important === true);
+  useEffect(hook, []);
 
   return (
-    <div className="app_container">
-      <h1 className="title">Notes</h1>
-      <div className="flex_container">
-        <button
-          className="custom_button"
-          style={{
-            backgroundColor: showAll
-              ? // Blue
-                "#2dd4bf"
-              : "#ec4899",
-          }}
-          onClick={() => setShowAll(!showAll)}
-        >
-          show {showAll ? "important" : "all"}
-        </button>
+    <ThemeProvider>
+      <Navbar user={user} />
+      <div className="flex justify-center py-20">
+        <div className="w-1/2">
+          {!user && (
+            <Togglable buttonLabel="Authenticate" user={user} ref={authFormRef}>
+              <LoginForm setUser={setUser} user={user} ref={authFormRef} />
+            </Togglable>
+          )}
+          {user && (
+            <Togglable
+              id="new-note-toggle"
+              buttonLabel="New Note"
+              user={user}
+              ref={noteFormRef}
+            >
+              <NoteForm
+                setNotes={setNotes}
+                notes={notes}
+                noteFormRef={noteFormRef}
+              />
+            </Togglable>
+          )}
+          <div className={`${user && "py-10"}`}>
+            <ShowNotes notes={notes} setNotes={setNotes} />
+          </div>
+        </div>
       </div>
-      <ul className="note_list">
-        {notesToShow.map((note) => (
-          <Note
-            key={note.id}
-            note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
-          />
-        ))}
-      </ul>
-      <div className="input_form">
-        <Form
-          addNote={addNote}
-          handleNoteChange={handleNoteChange}
-          newNote={newNote}
-        />
-      </div>
-    </div>
+    </ThemeProvider>
   );
 };
 export default App;
